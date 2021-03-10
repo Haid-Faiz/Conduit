@@ -5,6 +5,7 @@ buildscript {
         kotlin_version = "1.4.30"
         retrofit_version = "2.9.0"
         moshi_version = "1.11.0"
+        coroutine_version = "1.4.3"
     }
     repositories {
         google()

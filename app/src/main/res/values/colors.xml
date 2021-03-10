@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="conduit_yellow">#FFC017</color>
+    <color name="conduit_black">#050505</color>
+    <color name="conduit_grey">#1E1E1E</color>
+    <color name="conduit_color_light_text">#929292</color>
+    <color name="conduit_white">#FEFEFE</color>
+    <color name="grey">#818a91</color>
 </resources>
