@@ -1,11 +1,20 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
+
+//    viewBinding {
+//        enabled = true
+//    }
+
+//    dataBinding {
+//        enabled = true
+//    }
 
     defaultConfig {
         applicationId "com.example.conduit"
@@ -23,10 +32,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        viewBinding true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -41,7 +56,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.navigation:navigation-fragment:2.3.3'
     implementation 'androidx.navigation:navigation-ui:2.3.3'
+    // LiveData
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
+    // ViewModel
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.3'
@@ -49,7 +66,11 @@ dependencies {
     // Kotlin Coroutine library (Core -> means not specific to android)
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
 
+    // Library for api module
+    implementation project(":api")
+    // Testing
     testImplementation 'junit:junit:4.+'
+    //instrumentation testing
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

@@ -1,12 +1,11 @@
 package com.example.api
 
 import com.example.api.models.requests.SignUpRequest
-import com.example.api.models.requests.UserCred
+import com.example.api.models.requests.UserSignupCred
 import com.example.api.models.responses.ArticlesResponse
 import com.example.api.models.responses.UserResponse
 import com.example.api.services.ConduitClient
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -42,7 +41,7 @@ class ConduitClientTests {
     @Test
     fun `POST users - create user`() {
 
-        val userCred = UserCred(
+        val userCred = UserSignupCred(
             username = "testUserName${Random.nextInt(0, 1000)}",
             email = "testemail${Random.nextInt(0, 1000)}@test.com",
             password = "testPass${Random.nextInt(0, 1000)}"
