@@ -27,7 +27,7 @@ interface ConduitAPI {
     @POST("users/login")
     suspend fun loginUser(
         @Body loginRequest: LoginRequest
-    )
+    ): Response<UserResponse>
 
     @GET("articles/{slug}")
     suspend fun getArticleBySlug(
@@ -35,5 +35,5 @@ interface ConduitAPI {
     ): Response<ArticleResponse>
 
     @GET("tags")
-    suspend fun getTags() : Response<TagsResponse>
+    suspend fun getTags(): Response<TagsResponse>
 }

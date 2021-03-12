@@ -9,6 +9,10 @@ import retrofit2.http.*
 
 interface ConduitAuthAPI {
 
+    // These request calls requires a authentication token
+    // So either send token with headers with each call or
+    // either add an interceptor in client itself
+
     @GET("user")
     suspend fun getCurrentUser(): Response<UserResponse>
 

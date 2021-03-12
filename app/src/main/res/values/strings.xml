@@ -10,4 +10,7 @@
 
 
     <string name="menu_feed">Feed</string>
+    <string name="menu_auth">Login/Signup</string>
+    <string name="menu_login">Login</string>
+    <string name="menu_signup">Signup</string>
 </resources>

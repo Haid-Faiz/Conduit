@@ -3,8 +3,7 @@ package com.example.conduit
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+import android.widget.Toast
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,12 +13,18 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import com.example.api.models.entities.User
 import com.example.conduit.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var _activityMainBinding: ActivityMainBinding? = null
+    private lateinit var authViewModel: AuthViewModel
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,25 +33,45 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val fab: FloatingActionButton = findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        authViewModel = ViewModelProvider(this).get(AuthViewModel::class.java)
+
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_feed,
+                R.id.nav_auth
             ),
             drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        authViewModel.user.observe(this) {
+            updateMenu(it)
+            Toast.makeText(this, "Logged in as: ${it?.username}", Toast.LENGTH_SHORT).show()
+        }
     }
+
+    private fun updateMenu(user: User?) {
+        when (user) {
+            is User -> {
+
+                _activityMainBinding?.navView?.menu?.clear()
+                navController.navigateUp()
+                _activityMainBinding?.navView?.inflateMenu(R.menu.activity_main_user)
+            }
+            else -> {
+                _activityMainBinding?.navView?.inflateMenu(R.menu.activity_main_guest)
+            }
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
