@@ -35,11 +35,6 @@ class MainActivity : AppCompatActivity() {
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         authViewModel = ViewModelProvider(this).get(AuthViewModel::class.java)
-
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
-
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -47,10 +42,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_feed,
                 R.id.nav_auth
             ),
-            drawerLayout
+            _activityMainBinding?.drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        _activityMainBinding?.navView?.setupWithNavController(navController)
 
         authViewModel.user.observe(this) {
             updateMenu(it)
@@ -61,10 +56,10 @@ class MainActivity : AppCompatActivity() {
     private fun updateMenu(user: User?) {
         when (user) {
             is User -> {
-
                 _activityMainBinding?.navView?.menu?.clear()
                 navController.navigateUp()
                 _activityMainBinding?.navView?.inflateMenu(R.menu.activity_main_user)
+                _activityMainBinding?.navView?.setCheckedItem(R.id.nav_feed)
             }
             else -> {
                 _activityMainBinding?.navView?.inflateMenu(R.menu.activity_main_guest)

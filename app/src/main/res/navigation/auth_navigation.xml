@@ -9,7 +9,7 @@
         android:id="@+id/login_fragment"
         android:name="com.example.conduit.ui.auth.LoginFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login_signup" />
     <fragment
         android:id="@+id/signup_fragment"
         android:name="com.example.conduit.ui.auth.SignupFragment"

@@ -28,7 +28,9 @@ class GlobalFeedFragment : Fragment() {
         feedArticleAdapter = FeedArticleAdapter()
         _fragmentFeedBinding!!.feedRecyclerview.adapter = feedArticleAdapter
 
+        // Calling the fetchGlobalFeed() method to make a request to server
         feedViewModel.fetchGlobalFeed()
+        // & now observing the viewModel
         feedViewModel.feed.observe(viewLifecycleOwner) {
             feedArticleAdapter.submitList(it)
         }

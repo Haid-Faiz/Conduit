@@ -4,7 +4,7 @@ import com.example.api.services.ConduitClient
 
 object ArticlesRepo {
 
-    private val api = ConduitClient.getApiService()
+    private val publicApi = ConduitClient.getApiService()
 
-    suspend fun getArticles() = api?.getArticles()
+    suspend fun getArticles() = publicApi?.getArticles()
 }

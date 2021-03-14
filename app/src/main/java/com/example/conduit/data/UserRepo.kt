@@ -20,8 +20,11 @@ object UserRepo {
         return response?.body()?.user
     }
 
-    suspend fun signUp(username: String, email: String, password: String) =
-        publicApi?.signUpUser(SignUpRequest(UserSignupCred(username, email, password)))?.body()?.user
+    suspend fun signUp(username: String, email: String, password: String): User? {
+        val response = publicApi?.signUpUser(SignUpRequest(UserSignupCred(username, email, password)))
+        ConduitClient.authToken = response?.body()?.user?.token
+        return response?.body()?.user
+    }
 
     suspend fun getCurrentUser() = authApi?.getCurrentUser()?.body()?.user
 }

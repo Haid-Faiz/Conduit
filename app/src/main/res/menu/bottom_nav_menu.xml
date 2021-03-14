@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="login_fragment"
+        android:id="@+id/login_fragment"
         android:icon="@drawable/ic_baseline_login"
         android:title="@string/menu_login" />
 
     <item
-        android:id="signup_fragment"
+        android:id="@+id/signup_fragment"
         android:icon="@drawable/ic_signup"
         android:title="@string/menu_signup" />
+
 </menu>
