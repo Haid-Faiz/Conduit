@@ -5,6 +5,9 @@ import com.example.api.services.ConduitClient
 object ArticlesRepo {
 
     private val publicApi = ConduitClient.getApiService()
+    private val authAPI = ConduitClient.getAuthApiService()
 
-    suspend fun getArticles() = publicApi?.getArticles()
+    suspend fun getGlobalFeed() = publicApi?.getArticles()?.body()?.articles
+
+    suspend fun getMyFeed() = authAPI?.getFeedArticles()?.body()?.articles
 }

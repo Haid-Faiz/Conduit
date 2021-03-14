@@ -30,8 +30,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _activityMainBinding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(_activityMainBinding?.root)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         authViewModel = ViewModelProvider(this).get(AuthViewModel::class.java)
@@ -40,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_feed,
+                R.id.nav_my_feed,
                 R.id.nav_auth
             ),
             _activityMainBinding?.drawerLayout
