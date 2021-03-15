@@ -9,11 +9,11 @@ data class UserUpdateCred(
     @Json(name = "bio")
     val bio: String?,
     @Json(name = "image")
-    val image: String,
+    val image: String?,
     @Json(name = "username")
-    val username: String,
+    val username: String?,
     @Json(name = "email")
-    val email: String,
+    val email: String?,
     @Json(name = "password")
-    val password: String
+    val password: String?
 )

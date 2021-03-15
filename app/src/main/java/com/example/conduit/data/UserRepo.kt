@@ -1,10 +1,8 @@
 package com.example.conduit.data
 
 import com.example.api.models.entities.User
-import com.example.api.models.requests.LoginRequest
-import com.example.api.models.requests.SignUpRequest
-import com.example.api.models.requests.UserLoginCred
-import com.example.api.models.requests.UserSignupCred
+import com.example.api.models.entities.UserUpdateCred
+import com.example.api.models.requests.*
 import com.example.api.models.responses.UserResponse
 import com.example.api.services.ConduitClient
 import retrofit2.Response
@@ -27,4 +25,21 @@ object UserRepo {
     }
 
     suspend fun getCurrentUser() = authApi?.getCurrentUser()?.body()?.user
+
+    suspend fun updateUser(
+        username: String?,
+        email: String?,
+        password: String?,
+        bio: String?,
+        imageUrl: String?
+    ): User? {
+        val response = authApi?.updateCurrentUser(
+            UserUpdateRequest(
+                UserUpdateCred(
+                    username, email, password, bio, imageUrl
+                )
+            )
+        )
+        return response?.body()?.user
+    }
 }
