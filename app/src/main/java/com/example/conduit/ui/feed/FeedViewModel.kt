@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 
 class FeedViewModel : ViewModel() {
 
+    private lateinit var article: Article
     private val _feed: MutableLiveData<List<Article>> = MutableLiveData<List<Article>>()
     var feed: LiveData<List<Article>> = _feed
 
@@ -24,5 +25,11 @@ class FeedViewModel : ViewModel() {
             _feed.postValue(it)
         }
     }
+
+    fun saveArticle(article: Article) {
+        this.article = article
+    }
+
+    fun getArticle(): Article = article
 
 }

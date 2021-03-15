@@ -47,7 +47,6 @@ class SettingsFragment : Fragment() {
                     password = passInput.editText?.text.toString().takeIf { it.isNotBlank() }
                 )
             }
-
         }
     }
 

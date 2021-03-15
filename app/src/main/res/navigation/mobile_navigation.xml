@@ -9,13 +9,21 @@
         android:id="@+id/nav_feed"
         android:name="com.example.conduit.ui.feed.GlobalFeedFragment"
         android:label="@string/menu_feed"
-        tools:layout="@layout/fragment_feed" />
+        tools:layout="@layout/fragment_feed" >
+        <action
+            android:id="@+id/action_nav_feed_to_nav_article"
+            app:destination="@id/nav_article" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_my_feed"
         android:name="com.example.conduit.ui.feed.MyFeedFragment"
         android:label="@string/menu_my_feed"
-        tools:layout="@layout/fragment_feed" />
+        tools:layout="@layout/fragment_feed" >
+        <action
+            android:id="@+id/action_nav_my_feed_to_nav_article"
+            app:destination="@id/nav_article" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_settings"
@@ -28,6 +36,10 @@
         android:name="com.example.conduit.ui.auth.AuthFragment"
         android:label="@string/menu_auth"
         tools:layout="@layout/fragment_auth" />
+    <fragment
+        android:id="@+id/nav_article"
+        android:name="com.example.conduit.ui.article.ArticleFragment"
+        tools:layout="@layout/fragment_article"/>
 
 
 </navigation>

@@ -1,5 +1,6 @@
 package com.example.conduit.data
 
+import com.example.api.models.entities.Article
 import com.example.api.services.ConduitClient
 
 object ArticlesRepo {
