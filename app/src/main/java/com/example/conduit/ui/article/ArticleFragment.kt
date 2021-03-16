@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.conduit.databinding.FragmentArticleBinding
+import com.example.conduit.extensions.formatDate
+import com.example.conduit.extensions.loadImage
 import com.example.conduit.ui.feed.FeedViewModel
 
 class ArticleFragment : Fragment() {
@@ -28,9 +31,10 @@ class ArticleFragment : Fragment() {
         feedViewModel.getArticle()?.let {
             _binding?.apply {
                 articleTitle.text = it.title
-                articleTimestamp.text = it.createdAt
+                articleTimestamp.formatDate(it.createdAt)
                 articleAuthorName.text = it.author.username
                 articleBody.text = it.body
+                articleAuthorImage.loadImage(it.author.image)
             }
         }
     }
