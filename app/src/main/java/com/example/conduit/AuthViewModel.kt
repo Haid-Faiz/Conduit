@@ -14,7 +14,6 @@ class AuthViewModel : ViewModel() {
     val user: LiveData<User?> = _user
 
     fun loginUser(email: String, password: String) = viewModelScope.launch {
-
         UserRepo.loginUser(email, password)?.let {
             _user.postValue(it)
         }
@@ -36,6 +35,16 @@ class AuthViewModel : ViewModel() {
         UserRepo.updateUser(username, email, password, bio, imageUrl)?.let {
             _user.postValue(it)
         }
+    }
+
+    fun getCurrentUser(token: String) = viewModelScope.launch {
+        UserRepo.getCurrentUser(token)?.let {
+            _user.postValue(it)
+        }
+    }
+
+    fun logout() {
+        _user.postValue(null)
     }
 
 }

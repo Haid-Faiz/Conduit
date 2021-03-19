@@ -24,7 +24,10 @@ object UserRepo {
         return response?.body()?.user
     }
 
-    suspend fun getCurrentUser() = authApi?.getCurrentUser()?.body()?.user
+    suspend fun getCurrentUser(token: String): User? {
+        ConduitClient.authToken = token
+        return authApi?.getCurrentUser()?.body()?.user
+    }
 
     suspend fun updateUser(
         username: String?,

@@ -1,8 +1,10 @@
 package com.example.conduit
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -13,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -21,10 +24,16 @@ import com.example.conduit.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        private const val PREFS_FILE_AUTH = "prefs_auth"
+        private const val PREFS_KEY_TOKEN = "token"
+    }
+
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var _activityMainBinding: ActivityMainBinding? = null
     private lateinit var authViewModel: AuthViewModel
     private lateinit var navController: NavController
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +41,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(_activityMainBinding?.root)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        sharedPreferences = getSharedPreferences(PREFS_FILE_AUTH, MODE_PRIVATE)
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         authViewModel = ViewModelProvider(this).get(AuthViewModel::class.java)
+
+        sharedPreferences.getString(PREFS_KEY_TOKEN, null)?.let {
+            authViewModel.getCurrentUser(it)
+        }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -49,19 +63,28 @@ class MainActivity : AppCompatActivity() {
 
         authViewModel.user.observe(this) {
             updateMenu(it)
-            Toast.makeText(this, "Logged in as: ${it?.username}", Toast.LENGTH_SHORT).show()
+            it?.token?.let { token: String ->
+                sharedPreferences.edit {
+                    this.putString(PREFS_KEY_TOKEN, token).apply()
+                    Toast.makeText(this@MainActivity, "Welcome ${it.username}", Toast.LENGTH_LONG).show()
+                }
+            } ?: run {
+                sharedPreferences.edit().remove(PREFS_KEY_TOKEN).apply()
+                Toast.makeText(this@MainActivity, "Successfully Logged out", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     private fun updateMenu(user: User?) {
+        _activityMainBinding?.navView?.setCheckedItem(R.id.nav_feed)
         when (user) {
             is User -> {
                 _activityMainBinding?.navView?.menu?.clear()
                 navController.navigateUp()
                 _activityMainBinding?.navView?.inflateMenu(R.menu.activity_main_user)
-                _activityMainBinding?.navView?.setCheckedItem(R.id.nav_feed)
             }
             else -> {
+                _activityMainBinding?.navView?.menu?.clear()
                 _activityMainBinding?.navView?.inflateMenu(R.menu.activity_main_guest)
             }
         }
@@ -74,8 +97,23 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_logout -> {
+                authViewModel.logout()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _activityMainBinding = null
     }
 }
