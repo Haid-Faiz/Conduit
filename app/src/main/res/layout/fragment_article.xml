@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/conduit_black">
 
     <TextView
         android:id="@+id/article_title"
@@ -13,7 +14,7 @@
         android:layout_margin="24dp"
         tools:text="This is Article Title"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:textColor="@color/conduit_black"
+        android:textColor="@color/conduit_color_light_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:textColor="@color/conduit_black"
+        android:textColor="@color/conduit_color_light_text"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/article_author_image"
@@ -47,7 +48,7 @@
         android:textSize="10sp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_marginStart="16dp"
-        android:textColor="@color/conduit_black"
+        android:textColor="@color/conduit_color_light_text"
         tools:text="15 Dec, 2020"
         app:layout_constraintBottom_toBottomOf="@+id/article_author_image"
         app:layout_constraintStart_toEndOf="@+id/article_author_image" />
@@ -56,7 +57,7 @@
         android:id="@+id/article_body"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/conduit_black"
+        android:textColor="@color/conduit_color_light_text"
         android:layout_margin="24dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="Hi man this is one plus 8t, It is very good phone you can have. This phone have many fratures you can see more fratures on it's company website page or you can also visit www.oneplus.com or otherwise there are lots of ways of getting this phone knowledge \nHi man this is one plus 8t, It is very good phone you can have. This phone have many fratures you can see more fratures on it's company website page or you can also visit www.oneplus.com or otherwise there are lots of ways of getting this phone knowledge \n

@@ -17,6 +17,7 @@ class SignupFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _fragmentLoginSignupBinding = FragmentLoginSignupBinding.inflate(inflater, container, false)
         _fragmentLoginSignupBinding?.usernameInput?.visibility = View.VISIBLE
+        _fragmentLoginSignupBinding?.authenticationTextview?.text = "Sign up"
         return _fragmentLoginSignupBinding?.root
     }
 

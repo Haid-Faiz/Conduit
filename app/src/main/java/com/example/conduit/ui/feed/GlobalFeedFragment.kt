@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -41,6 +42,9 @@ class GlobalFeedFragment : Fragment() {
         // & now observing the viewModel
         feedViewModel.feed.observe(viewLifecycleOwner) {
             feedArticleAdapter.submitList(it)
+            _fragmentFeedBinding?.feedRecyclerview?.isVisible = true
+            _fragmentFeedBinding?.shimmerLayout?.isVisible = false
+            _fragmentFeedBinding?.shimmerLayout?.stopShimmer()
         }
     }
 

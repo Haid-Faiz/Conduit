@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -21,6 +23,8 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.api.models.entities.User
 import com.example.conduit.databinding.ActivityMainBinding
+import com.example.conduit.databinding.NavHeaderMainBinding
+import com.example.conduit.extensions.loadImage
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,8 +57,7 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_feed,
-                R.id.nav_my_feed,
-                R.id.nav_auth
+                R.id.nav_my_feed
             ),
             _activityMainBinding?.drawerLayout
         )
@@ -82,6 +85,10 @@ class MainActivity : AppCompatActivity() {
                 _activityMainBinding?.navView?.menu?.clear()
                 navController.navigateUp()
                 _activityMainBinding?.navView?.inflateMenu(R.menu.activity_main_user)
+                val navHeaderView = _activityMainBinding?.navView?.getHeaderView(0)
+                navHeaderView?.findViewById<ImageView>(R.id.user_profile_image)?.loadImage(user.image!!)
+                navHeaderView?.findViewById<TextView>(R.id.user_profile_name)?.text = user.username
+                navHeaderView?.findViewById<TextView>(R.id.user_profile_email)?.text = user.email
             }
             else -> {
                 _activityMainBinding?.navView?.menu?.clear()

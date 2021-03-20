@@ -2,21 +2,36 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/feed_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/list_item_article"/>
+        tools:listitem="@layout/list_item_article"
+        android:visibility="invisible"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_article_button"
-        android:layout_width="wrap_content"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:src="@drawable/ic_add_article" />
+        app:shimmer_auto_start="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/article_list_shimmer"/>
+            <include layout="@layout/article_list_shimmer"/>
+            <include layout="@layout/article_list_shimmer"/>
+            <include layout="@layout/article_list_shimmer"/>
+            <include layout="@layout/article_list_shimmer"/>
+            <include layout="@layout/article_list_shimmer"/>
+            <include layout="@layout/article_list_shimmer"/>
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
