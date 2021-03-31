@@ -39,6 +39,14 @@ class ConduitClientTests {
     }
 
     @Test
+    fun `GET my articles`() {
+        runBlocking {
+            val resp: Response<ArticlesResponse>? = ConduitClient.getAuthApiService()?.getFeedArticles()
+            assertNotNull(resp?.body()?.articles)
+        }
+    }
+
+    @Test
     fun `POST users - create user`() {
 
         val userCred = UserSignupCred(
@@ -52,5 +60,4 @@ class ConduitClientTests {
             assertEquals(userCred.username, resp?.body()?.user?.username)
         }
     }
-
 }

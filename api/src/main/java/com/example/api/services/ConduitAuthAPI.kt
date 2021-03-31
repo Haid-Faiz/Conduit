@@ -1,5 +1,7 @@
 package com.example.api.services
 
+import com.example.api.models.entities.CreateArticle
+import com.example.api.models.requests.CreateArticleRequest
 import com.example.api.models.requests.LoginRequest
 import com.example.api.models.requests.SignUpRequest
 import com.example.api.models.requests.UserUpdateRequest
@@ -21,6 +23,14 @@ interface ConduitAuthAPI {
         @Body userUpdateRequest: UserUpdateRequest
     ): Response<UserResponse>
 
+    @POST("articles")
+    suspend fun createArticle(
+        @Body createArticleRequest: CreateArticleRequest
+    ): Response<ArticleResponse>
+
+    @GET("articles/feed")
+    suspend fun getFeedArticles(): Response<ArticlesResponse>
+
     @GET("profiles/{username}")
     suspend fun getProfile(
         @Path("username") username: String
@@ -35,9 +45,6 @@ interface ConduitAuthAPI {
     suspend fun unFollowProfile(
         @Path("username") username: String
     ): Response<ProfileResponse>
-
-    @GET("articles/feed")
-    suspend fun getFeedArticles(): Response<ArticlesResponse>
 
     @POST("articles/{slug}/favorite")
     suspend fun favoriteArticle(
