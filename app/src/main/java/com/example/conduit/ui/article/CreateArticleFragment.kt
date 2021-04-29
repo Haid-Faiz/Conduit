@@ -9,43 +9,47 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.api.models.entities.Article
+import com.example.api.services.ConduitClient
+import com.example.conduit.base.BaseFragment
+import com.example.conduit.base.Resource
+import com.example.conduit.data.repos.ArticlesRepo
 import com.example.conduit.databinding.FragmentCreateArticleBinding
+import com.example.conduit.extensions.handleApiError
+import com.example.conduit.extensions.showSnackBar
 
-class CreateArticleFragment : Fragment() {
-
-    private var _binding: FragmentCreateArticleBinding? = null
-    private lateinit var articleViewModel: ArticleViewModel
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentCreateArticleBinding.inflate(inflater, container, false)
-        return _binding?.root
-    }
+class CreateArticleFragment : BaseFragment<FragmentCreateArticleBinding, ArticleViewModel, ArticlesRepo>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        articleViewModel = ViewModelProvider(this).get(ArticleViewModel::class.java)
 
+        viewModel.article.observe(viewLifecycleOwner) {
+            (it is Resource.Loading).let { check: Boolean ->
+                _binding!!.publishArticleProgressBar.isVisible = check
+                _binding!!.publishArticleButton.text = if (check) "" else "Submit"
+                _binding?.publishArticleButton?.isEnabled = !check
+            }
+
+            when (it) {
+                is Resource.Failure -> handleApiError(it, { createArticle() })
+                is Resource.Success -> updateUI(it.value.body()?.article)
+            }
+        }
+    }
+
+    private fun updateUI(article: Article?) {
+        showSnackBar("Your is article successfully published.")
+        findNavController().navigateUp()
+    }
+
+    private fun createArticle() {
         _binding?.apply {
             publishArticleButton.setOnClickListener {
-                articleViewModel.createArticle(
+                viewModel.createArticle(
                     title = inputArticleTitle.editText?.text.toString().trim(),
                     description = inputAboutArticle.editText?.text.toString().trim(),
                     body = inputArticleBody.editText?.text.toString().trim()
                 )
-                // start progress
-                _binding?.publishArticleProgressBar?.isVisible = true
-                _binding?.publishArticleButton?.text = "Please wait..."
-                _binding?.publishArticleButton?.isEnabled = false
-            }
-        }
-
-        articleViewModel.article.observe(viewLifecycleOwner) {
-            it?.let {
-                // end progress
-                _binding?.publishArticleProgressBar?.isVisible = true
-                _binding?.publishArticleButton?.isEnabled = false
-                findNavController().navigateUp()
-                Toast.makeText(requireContext(), "Article Created", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -57,8 +61,10 @@ class CreateArticleFragment : Fragment() {
     // want to go in past
     // Is anyone here who could let me go over there
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
+    override fun getViewModal(): Class<ArticleViewModel> = ArticleViewModel::class.java
+
+    override fun getRepo(): ArticlesRepo = ArticlesRepo(authApi = ConduitClient.getAuthApiService())
+
+    override fun getBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCreateArticleBinding =
+        FragmentCreateArticleBinding.inflate(inflater, container, false)
 }

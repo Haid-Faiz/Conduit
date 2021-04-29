@@ -4,38 +4,56 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.core.view.isVisible
+import com.example.api.models.entities.User
+import com.example.api.services.ConduitClient
 import com.example.conduit.AuthViewModel
+import com.example.conduit.base.BaseFragment
+import com.example.conduit.base.Resource
+import com.example.conduit.data.repos.UserRepo
 import com.example.conduit.databinding.FragmentSettingsBinding
+import com.example.conduit.extensions.handleApiError
+import com.example.conduit.extensions.showSnackBar
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : BaseFragment<FragmentSettingsBinding, AuthViewModel, UserRepo>() {
 
-    private var _binding: FragmentSettingsBinding? = null
-    private val authViewModel: AuthViewModel by activityViewModels()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        return _binding?.root
-    }
+//    private val authViewModel: AuthViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        authViewModel.user.observe(viewLifecycleOwner) {
+        viewModel.user.observe(viewLifecycleOwner) {
 
-            _binding?.apply {
-                usernameInput.editText?.setText(it?.username)
-                imageUrlInput.editText?.setText(it?.image)
-                bioInput.editText?.setText(it?.bio)
-                emailInput.editText?.setText(it?.email)
-                passInput.editText?.setText(it?.email)
+            (it is Resource.Loading).let { check:Boolean->
+                _binding!!.progressBarSettings.isVisible = check
+                _binding!!.updateButton.text = if (check) "" else "Update profile"
+                _binding!!.updateButton.isEnabled = !check
+            }
+            when(it) {
+                is Resource.Failure -> handleApiError(it) {updateUserData()}
+                is Resource.Success -> updateUI(it.value.body()?.user)
             }
         }
+    }
 
+    private fun updateUI(user: User?) {
+        user?.let {
+
+            _binding?.apply {
+                usernameInput.editText?.setText(it.username)
+                imageUrlInput.editText?.setText(it.image)
+                bioInput.editText?.setText(it.bio)
+                emailInput.editText?.setText(it.email)
+//                passInput.editText?.setText(it)
+            }
+            showSnackBar("Your profile updated successfully.")
+        }
+    }
+
+    private fun updateUserData() {
         _binding?.apply {
             updateButton.setOnClickListener {
-                authViewModel.updateUser(
+                viewModel.updateUser(
                     // Actually takeIf { it.isNotBlank() } will return null when the editText would be blank
                     // & if we update blank string on api then api will accept it & will replace the value with
                     // blank & we don't want that But if we send null to api instead of blank string
@@ -50,10 +68,10 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // Making it null in onDestroyView saves a memory leak
-        _binding = null
-    }
+    override fun getViewModal(): Class<AuthViewModel> = AuthViewModel::class.java
 
+    override fun getRepo(): UserRepo = UserRepo(authApi = ConduitClient.getAuthApiService(), userPreference = userPreference)
+
+    override fun getBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
+        FragmentSettingsBinding.inflate(inflater, container, false)
 }

@@ -13,8 +13,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     // Retrofit 2
-    api "com.squareup.retrofit2:retrofit:$retrofit_version"   // api add krne se app level ke andr eccesss aa jaega retrpfit ka nut isse building thodi slow ho jati hai
-
+    api "com.squareup.retrofit2:retrofit:$retrofit_version"   // api add krne se app level ke andr eccesss aa jaega retrpfit ka
+                                                              // but isse building thodi slow ho jati hai
+    // Moshi converter factory
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
     // OkHttp
     implementation "com.squareup.okhttp3:okhttp:4.9.0"

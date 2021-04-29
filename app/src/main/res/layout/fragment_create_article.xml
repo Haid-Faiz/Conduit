@@ -6,10 +6,9 @@
     android:layout_height="match_parent"
     android:background="@color/conduit_black">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
 <!--        <ImageView-->
 <!--            android:layout_width="wrap_content"-->
@@ -44,12 +43,16 @@
             android:hint="Article Title"
             android:textColorHint="@color/box_color"
             app:boxStrokeColor="@color/box_color"
-            app:hintTextColor="@color/box_color">
+            app:hintTextColor="@color/box_color"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/conduit_white"
+                android:imeOptions="actionNext"
                 tools:text="This is article title" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,11 +68,15 @@
             android:hint="What's this article about ?"
             android:textColorHint="@color/box_color"
             app:boxStrokeColor="@color/box_color"
-            app:hintTextColor="@color/box_color">
+            app:hintTextColor="@color/box_color"
+            app:layout_constraintTop_toBottomOf="@+id/input_article_title"
+            app:layout_constraintStart_toStartOf="@id/input_article_title"
+            app:layout_constraintEnd_toEndOf="@id/input_article_title">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:textColor="@color/conduit_white"
                 tools:text="This is article's about" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -85,14 +92,18 @@
             android:hint="Write your article..."
             android:textColorHint="@color/box_color"
             app:boxStrokeColor="@color/box_color"
-            app:hintTextColor="@color/box_color">
+            app:hintTextColor="@color/box_color"
+            app:layout_constraintTop_toBottomOf="@id/input_about_article"
+            app:layout_constraintStart_toStartOf="@id/input_about_article"
+            app:layout_constraintEnd_toEndOf="@id/input_about_article">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="top"
                 android:textColor="@color/conduit_white"
-                tools:text="This is article body" />
+                tools:text="This is article body"
+                android:imeOptions="actionDone"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -100,21 +111,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="36dp"
             android:layout_marginEnd="16dp"
             android:backgroundTint="@color/conduit_grey"
             android:text="Submit"
-            android:textColor="@color/conduit_yellow" />
+            android:textColor="@color/conduit_yellow"
+            app:layout_constraintTop_toBottomOf="@id/input_article_body"
+            app:layout_constraintStart_toStartOf="@id/input_article_body"
+            app:layout_constraintEnd_toEndOf="@id/input_article_body"/>
 
         <ProgressBar
             android:id="@+id/publish_article_progress_bar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="24dp"
-            android:visibility="invisible"/>
+            android:layout_height="0dp"
+            android:elevation="7dp"
+            android:layout_margin="8dp"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="@id/publish_article_button"
+            app:layout_constraintStart_toStartOf="@id/publish_article_button"
+            app:layout_constraintEnd_toEndOf="@id/publish_article_button"
+            app:layout_constraintBottom_toBottomOf="@id/publish_article_button"/>
 
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

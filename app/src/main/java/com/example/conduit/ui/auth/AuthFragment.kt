@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.example.conduit.R
 import com.example.conduit.databinding.FragmentAuthBinding
-import com.google.android.material.tabs.TabLayout
 
 class AuthFragment : Fragment(){
 
@@ -26,7 +23,6 @@ class AuthFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         navController = Navigation.findNavController(requireActivity(), R.id.auth_nav_host_fragment)
         _fragmentAuthBinding!!.authBottomNav.setupWithNavController(navController)
     }

@@ -7,7 +7,7 @@ import com.example.api.models.entities.Article
 import com.example.api.models.responses.ArticlesResponse
 import com.example.conduit.base.BaseViewModel
 import com.example.conduit.base.Resource
-import com.example.conduit.data.ArticlesRepo
+import com.example.conduit.data.repos.ArticlesRepo
 import kotlinx.coroutines.launch
 import retrofit2.Response
 

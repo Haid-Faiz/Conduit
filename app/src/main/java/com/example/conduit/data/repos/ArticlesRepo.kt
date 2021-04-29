@@ -1,4 +1,4 @@
-package com.example.conduit.data
+package com.example.conduit.data.repos
 
 import com.example.api.models.requests.CreateArticleRequest
 import com.example.api.models.responses.ArticleResponse
@@ -11,8 +11,8 @@ import com.example.conduit.base.Resource
 import retrofit2.Response
 
 class ArticlesRepo(
-    private val publicApi: ConduitAPI,
-    private val authApi: ConduitAuthAPI
+    private val publicApi: ConduitAPI? = null,
+    private val authApi: ConduitAuthAPI? = null
 ) : BaseRepo() {
 
 //    private val publicApi = ConduitClient.getApiService()
@@ -26,12 +26,12 @@ class ArticlesRepo(
 //        createArticleRequest: CreateArticleRequest
 //    ) = authApi?.createArticle(createArticleRequest)?.body()?.article
 
-    suspend fun getGlobalFeed(): Resource<out Response<ArticlesResponse>> = safeApiCall { publicApi.getArticles() }
+    suspend fun getGlobalFeed(): Resource<out Response<ArticlesResponse>> = safeApiCall { publicApi!!.getArticles() }
 
-    suspend fun getFeedArticles(): Resource<out Response<ArticlesResponse>> = safeApiCall { authApi.getFeedArticles() }
+    suspend fun getFeedArticles(): Resource<out Response<ArticlesResponse>> = safeApiCall { authApi!!.getFeedArticles() }
 
     suspend fun createArticle(
         createArticleRequest: CreateArticleRequest
-    ): Resource<out Response<ArticleResponse>> = safeApiCall { authApi.createArticle(createArticleRequest) }
+    ): Resource<out Response<ArticleResponse>> = safeApiCall { authApi!!.createArticle(createArticleRequest) }
 
 }

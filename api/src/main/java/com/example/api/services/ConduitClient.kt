@@ -15,7 +15,7 @@ object ConduitClient {
     private const val BASE_URL = "https://conduit.productionready.io/api/"
     var authToken: String? = null
 
-    private val authInterceptor = object : Interceptor {
+    private val authInterceptor: Interceptor = object : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             var request = chain.request()
             authToken?.let {
@@ -25,9 +25,9 @@ object ConduitClient {
         }
     }
 
-    private var okHttpBuilder = OkHttpClient.Builder()
+    private var okHttpBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
         .readTimeout(5, TimeUnit.SECONDS)
-        .connectTimeout(2, TimeUnit.SECONDS)
+        .connectTimeout(2, TimeUnit.SECONDS)  // .build()  ->  will give okHttpclient
 
     private fun getClient(): Retrofit.Builder? {
         if (retrofitBuilder == null) {
@@ -41,7 +41,7 @@ object ConduitClient {
     fun getApiService(): ConduitAPI? {
         if (publicApi == null) {
             publicApi = getClient()?.client(
-                okHttpBuilder.build()
+                okHttpBuilder.build()   // okHttpBuilder.build() will give the okHttpClient
             )?.build()?.create(ConduitAPI::class.java)
         }
         return publicApi

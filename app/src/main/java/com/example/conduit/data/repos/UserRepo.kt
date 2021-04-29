@@ -1,5 +1,6 @@
-package com.example.conduit.data
+package com.example.conduit.data.repos
 
+import android.content.Context
 import com.example.api.models.entities.User
 import com.example.api.models.entities.UserUpdateCred
 import com.example.api.models.requests.*
@@ -9,11 +10,13 @@ import com.example.api.services.ConduitAuthAPI
 import com.example.api.services.ConduitClient
 import com.example.conduit.base.BaseRepo
 import com.example.conduit.base.Resource
+import com.example.conduit.data.UserPreference
 import retrofit2.Response
 
 class UserRepo(
     private val publicApi: ConduitAPI? = null,
-    private val authApi: ConduitAuthAPI? = null
+    private val authApi: ConduitAuthAPI? = null,
+    private val userPreference: UserPreference
 ) : BaseRepo() {
 
 //    val publicApi = ConduitClient.getApiService()
@@ -75,5 +78,9 @@ class UserRepo(
         imageUrl: String?
     ): Resource<out Response<UserResponse>> = safeApiCall {
         authApi!!.updateCurrentUser(UserUpdateRequest(UserUpdateCred(username, email, password, bio, imageUrl)))
+    }
+
+    suspend fun saveAuthToken(token: String) {
+        userPreference.saveAuthToken(token)
     }
 }
