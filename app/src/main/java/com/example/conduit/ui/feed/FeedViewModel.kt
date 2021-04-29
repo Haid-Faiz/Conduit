@@ -2,26 +2,29 @@ package com.example.conduit.ui.feed
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.api.models.entities.Article
+import com.example.api.models.responses.ArticlesResponse
+import com.example.conduit.base.BaseViewModel
+import com.example.conduit.base.Resource
 import com.example.conduit.data.ArticlesRepo
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
-class FeedViewModel : ViewModel() {
+class FeedViewModel(private val articlesRepo: ArticlesRepo) : BaseViewModel(articlesRepo) {
 
     private lateinit var article: Article
-    private val _feed: MutableLiveData<List<Article>> = MutableLiveData<List<Article>>()
-    var feed: LiveData<List<Article>> = _feed
+    private var _feed: MutableLiveData<Resource<out Response<ArticlesResponse>>> = MutableLiveData()
+    val feed: LiveData<Resource<out Response<ArticlesResponse>>> = _feed
 
     fun fetchGlobalFeed() = viewModelScope.launch {
-        ArticlesRepo.getGlobalFeed()?.let {
+        articlesRepo.getGlobalFeed().let {
             _feed.postValue(it)
         }
     }
 
     fun fetchMyFeed() = viewModelScope.launch {
-        ArticlesRepo.getFeedArticles()?.let {
+        articlesRepo.getFeedArticles().let {
             _feed.postValue(it)
         }
     }
