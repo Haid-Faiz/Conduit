@@ -26,12 +26,12 @@ class ArticlesRepo(
 //        createArticleRequest: CreateArticleRequest
 //    ) = authApi?.createArticle(createArticleRequest)?.body()?.article
 
-    suspend fun getGlobalFeed(): Resource<out Response<ArticlesResponse>> = safeApiCall { publicApi!!.getArticles() }
+    suspend fun getGlobalFeed(): Resource<ArticlesResponse> = safeApiCall { publicApi!!.getArticles() }
 
-    suspend fun getFeedArticles(): Resource<out Response<ArticlesResponse>> = safeApiCall { authApi!!.getFeedArticles() }
+    suspend fun getFeedArticles(): Resource<ArticlesResponse> = safeApiCall { authApi!!.getFeedArticles() }
 
     suspend fun createArticle(
         createArticleRequest: CreateArticleRequest
-    ): Resource<out Response<ArticleResponse>> = safeApiCall { authApi!!.createArticle(createArticleRequest) }
+    ): Resource<ArticleResponse> = safeApiCall { authApi!!.createArticle(createArticleRequest) }
 
 }

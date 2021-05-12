@@ -15,6 +15,8 @@ import com.example.conduit.base.Resource
 import com.example.conduit.data.repos.ArticlesRepo
 import com.example.conduit.databinding.FragmentFeedBinding
 import com.example.conduit.extensions.handleApiError
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 class MyFeedFragment : BaseFragment<FragmentFeedBinding, FeedViewModel, ArticlesRepo>() {
 
@@ -37,7 +39,7 @@ class MyFeedFragment : BaseFragment<FragmentFeedBinding, FeedViewModel, Articles
         viewModel.feed.observe(viewLifecycleOwner) {
 
             when (it) {
-                is Resource.Success -> feedArticleAdapter.submitList(it.value.body()?.articles)
+                is Resource.Success -> feedArticleAdapter.submitList(it.value.articles)
                 is Resource.Failure -> handleApiError(it)
                 Resource.Loading -> {
                     _binding?.feedRecyclerview?.isVisible = true
@@ -50,7 +52,10 @@ class MyFeedFragment : BaseFragment<FragmentFeedBinding, FeedViewModel, Articles
 
     override fun getViewModal(): Class<FeedViewModel> = FeedViewModel::class.java
 
-    override fun getRepo(): ArticlesRepo = ArticlesRepo(authApi = ConduitClient.getAuthApiService())
+    override fun getRepo(): ArticlesRepo {
+        val authToken = runBlocking { userPreference.authToken.first() }
+        return ArticlesRepo(authApi = authToken?.let { ConduitClient.getAuthApiService(it) })
+    }
 
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentFeedBinding =
         FragmentFeedBinding.inflate(inflater, container, false)

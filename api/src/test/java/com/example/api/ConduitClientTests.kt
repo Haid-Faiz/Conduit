@@ -1,6 +1,8 @@
 package com.example.api
 
+import com.example.api.models.requests.LoginRequest
 import com.example.api.models.requests.SignUpRequest
+import com.example.api.models.requests.UserLoginCred
 import com.example.api.models.requests.UserSignupCred
 import com.example.api.models.responses.ArticlesResponse
 import com.example.api.models.responses.UserResponse
@@ -33,7 +35,8 @@ class ConduitClientTests {
     @Test
     fun `GET Articles by Tag`() {
         runBlocking {
-            val apiArticlesResponse: Response<ArticlesResponse> = ConduitClient.getApiService()!!.getArticles(tag = "dragons")
+            val apiArticlesResponse: Response<ArticlesResponse> =
+                ConduitClient.getApiService()!!.getArticles(tag = "dragons")
             assertNotNull(apiArticlesResponse.body()?.articles)
         }
     }
@@ -41,7 +44,7 @@ class ConduitClientTests {
     @Test
     fun `GET my articles`() {
         runBlocking {
-            val resp: Response<ArticlesResponse>? = ConduitClient.getAuthApiService()?.getFeedArticles()
+            val resp: Response<ArticlesResponse>? = ConduitClient.getAuthApiService("token")?.getFeedArticles()
             assertNotNull(resp?.body()?.articles)
         }
     }
@@ -58,6 +61,16 @@ class ConduitClientTests {
         runBlocking {
             val resp: Response<UserResponse>? = ConduitClient.getApiService()?.signUpUser(SignUpRequest(userCred))
             assertEquals(userCred.username, resp?.body()?.user?.username)
+        }
+    }
+
+    @Test
+    fun `GET - login request`() {
+        runBlocking {
+            val response = ConduitClient.getApiService()?.loginUser(
+                LoginRequest(UserLoginCred("codingcosmos@coding.com", "coding123"))
+            )
+            assertNotNull(response?.body()?.user)
         }
     }
 }

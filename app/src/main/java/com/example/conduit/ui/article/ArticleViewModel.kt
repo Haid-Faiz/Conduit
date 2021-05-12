@@ -11,11 +11,12 @@ import com.example.conduit.base.Resource
 import com.example.conduit.data.repos.ArticlesRepo
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.util.*
 
 class ArticleViewModel(private val articlesRepo: ArticlesRepo) : BaseViewModel(articlesRepo) {
 
-    private var _article : MutableLiveData<Resource<out Response<ArticleResponse>>> = MutableLiveData()
-    val article: LiveData<Resource<out Response<ArticleResponse>>> = _article
+    private var _article : MutableLiveData<Resource<ArticleResponse>> = MutableLiveData()
+    val article: LiveData<Resource<ArticleResponse>> = _article
 
     fun createArticle(
         title: String,

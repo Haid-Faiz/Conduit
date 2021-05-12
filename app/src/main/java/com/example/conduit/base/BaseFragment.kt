@@ -26,7 +26,7 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel, R : BaseRepo> :
         userPreference = UserPreference(requireContext())
         val repo = getRepo()
         val factory = ViewModelFactory(repo)
-        viewModel = ViewModelProvider(this, factory).get(getViewModal())
+        viewModel = ViewModelProvider(requireActivity(), factory).get(getViewModal())
     }
 
     override fun onDestroy() {

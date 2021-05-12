@@ -14,6 +14,8 @@ import com.example.conduit.data.repos.UserRepo
 import com.example.conduit.databinding.FragmentSettingsBinding
 import com.example.conduit.extensions.handleApiError
 import com.example.conduit.extensions.showSnackBar
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding, AuthViewModel, UserRepo>() {
 
@@ -31,22 +33,20 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, AuthViewModel, Us
             }
             when(it) {
                 is Resource.Failure -> handleApiError(it) {updateUserData()}
-                is Resource.Success -> updateUI(it.value.body()?.user)
+                is Resource.Success -> updateUI(it.value.user)
             }
         }
     }
 
     private fun updateUI(user: User?) {
         user?.let {
-
             _binding?.apply {
                 usernameInput.editText?.setText(it.username)
                 imageUrlInput.editText?.setText(it.image)
                 bioInput.editText?.setText(it.bio)
                 emailInput.editText?.setText(it.email)
-//                passInput.editText?.setText(it)
             }
-            showSnackBar("Your profile updated successfully.")
+            requireView().showSnackBar("Your profile updated successfully.")
         }
     }
 
@@ -61,8 +61,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, AuthViewModel, Us
                     username = usernameInput.editText?.text.toString().takeIf { it.isNotBlank() },
                     email = emailInput.editText?.text.toString().takeIf { it.isNotBlank() },
                     bio = bioInput.editText?.text.toString(),
-                    imageUrl = imageUrlInput.editText?.text.toString(),
-                    password = passInput.editText?.text.toString().takeIf { it.isNotBlank() }
+                    imageUrl = imageUrlInput.editText?.text.toString()
                 )
             }
         }
@@ -70,7 +69,10 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, AuthViewModel, Us
 
     override fun getViewModal(): Class<AuthViewModel> = AuthViewModel::class.java
 
-    override fun getRepo(): UserRepo = UserRepo(authApi = ConduitClient.getAuthApiService(), userPreference = userPreference)
+    override fun getRepo(): UserRepo {
+        val authToken = runBlocking { userPreference.authToken.first() }
+        return UserRepo(authApi = authToken?.let { ConduitClient.getAuthApiService(it)}, userPreference = userPreference)
+    }
 
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
         FragmentSettingsBinding.inflate(inflater, container, false)

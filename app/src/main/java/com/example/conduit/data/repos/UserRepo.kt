@@ -57,27 +57,26 @@ class UserRepo(
 //    }
 
 
-    suspend fun loginUser(email: String, password: String): Resource<out Response<UserResponse>> = safeApiCall {
+    suspend fun loginUser(email: String, password: String): Resource<UserResponse> = safeApiCall {
         publicApi!!.loginUser(LoginRequest(UserLoginCred(email, password)))
     }
 
-    suspend fun signUp(username: String, email: String, password: String): Resource<out Response<UserResponse>> =
+    suspend fun signUp(username: String, email: String, password: String): Resource<UserResponse> =
         safeApiCall {
             publicApi!!.signUpUser(SignUpRequest(UserSignupCred(username, email, password)))
         }
 
-    suspend fun getCurrentUser(token: String): Resource<out Response<UserResponse>> = safeApiCall {
+    suspend fun getCurrentUser(token: String): Resource<UserResponse> = safeApiCall {
         authApi!!.getCurrentUser()
     }
 
     suspend fun updateUser(
         username: String?,
         email: String?,
-        password: String?,
         bio: String?,
         imageUrl: String?
-    ): Resource<out Response<UserResponse>> = safeApiCall {
-        authApi!!.updateCurrentUser(UserUpdateRequest(UserUpdateCred(username, email, password, bio, imageUrl)))
+    ): Resource<UserResponse> = safeApiCall {
+        authApi!!.updateCurrentUser(UserUpdateRequest(UserUpdateCred(username, email, bio, imageUrl)))
     }
 
     suspend fun saveAuthToken(token: String) {

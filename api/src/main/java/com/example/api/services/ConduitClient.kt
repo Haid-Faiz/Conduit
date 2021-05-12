@@ -13,17 +13,16 @@ object ConduitClient {
     private var publicApi: ConduitAPI? = null
     private var authApi: ConduitAuthAPI? = null
     private const val BASE_URL = "https://conduit.productionready.io/api/"
-    var authToken: String? = null
 
-    private val authInterceptor: Interceptor = object : Interceptor {
-        override fun intercept(chain: Interceptor.Chain): Response {
-            var request = chain.request()
-            authToken?.let {
-                request = request.newBuilder().header("Authorization", "Token $it").build()
-            }
-            return chain.proceed(request = request)
-        }
-    }
+//    private val authInterceptor: Interceptor = object : Interceptor {
+//        override fun intercept(chain: Interceptor.Chain): Response {
+//            var request = chain.request()
+//            authToken?.let {
+//                request = request.newBuilder().header("Authorization", "Token $it").build()
+//            }
+//            return chain.proceed(request = request)
+//        }
+//    }
 
     private var okHttpBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
         .readTimeout(5, TimeUnit.SECONDS)
@@ -47,14 +46,27 @@ object ConduitClient {
         return publicApi
     }
 
-    fun getAuthApiService(): ConduitAuthAPI? {
+    fun getAuthApiService(token: String): ConduitAuthAPI? {
         if (authApi == null) {
             authApi = getClient()?.client(
-                okHttpBuilder.addInterceptor(authInterceptor).build()
+                okHttpBuilder.addInterceptor(Interceptor { chain ->
+                    var request = chain.request()
+                    request = request.newBuilder().header("Authorization", "Token $token").build()
+                    chain.proceed(request)
+                }).build()
             )?.build()?.create(ConduitAuthAPI::class.java)
         }
         return authApi
     }
+
+//    fun getAuthApiService(): ConduitAuthAPI? {
+//        if (authApi == null) {
+//            authApi = getClient()?.client(
+//                okHttpBuilder.addInterceptor(authInterceptor).build()
+//            )?.build()?.create(ConduitAuthAPI::class.java)
+//        }
+//        return authApi
+//    }
 
 //    ***NOTE***
 //    Interceptors allow us to intercept incoming or outgoing HTTP requests using the HttpClient.

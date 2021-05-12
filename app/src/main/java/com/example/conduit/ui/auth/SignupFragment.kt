@@ -32,10 +32,14 @@ class SignupFragment : BaseFragment<FragmentLoginSignupBinding, AuthViewModel, U
         signUp()
         viewModel.user.observe(viewLifecycleOwner) {
             // This line will automatically take care of visibility of progress bar
-            _binding!!.progressBarAuth.isVisible = it is Resource.Loading
+            (it is Resource.Loading).let {
+                _binding!!.progressBarAuth.isVisible = it
+                _binding!!.submitButton.text = if(it) "" else "Submit"
+                _binding!!.submitButton.isEnabled = !it
+            }
             when (it) {
                 is Resource.Failure -> handleApiError(it) { signUp() }
-                is Resource.Success -> updateUI(it.value.body()?.user)
+                is Resource.Success -> updateUI(it.value.user)
             }
         }
     }

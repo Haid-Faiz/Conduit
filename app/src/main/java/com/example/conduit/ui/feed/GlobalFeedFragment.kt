@@ -18,41 +18,62 @@ import com.example.conduit.extensions.handleApiError
 
 class GlobalFeedFragment : BaseFragment<FragmentFeedBinding, FeedViewModel, ArticlesRepo>() {
 
+
+
+    //        ListFragmentDirections.ActionListFragmentToDetailsFragment action =
+    //                ListFragmentDirections.actionListFragmentToDetailsFragment();
+    //
+    //        action.setPosition(position);
+    //        navControllerTwo.navigate(action);
+    //-----------------------------------------------------
+
+    //        In Java --->
+//        position = DetailsFragmentArgs.fromBundle(getArguments()).position
+//        In Kotlin --->
+//        val args by navArgs<DetailsFragmentArgs>()
+
     private lateinit var feedArticleAdapter: FeedArticleAdapter
     private lateinit var navController: NavController
-
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        feedViewModel = ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
-//        _fragmentFeedBinding = FragmentFeedBinding.inflate(inflater, container, false)
-//        return _fragmentFeedBinding?.root
-//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
-        _binding!!.feedRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-        feedArticleAdapter = FeedArticleAdapter {
-            viewModel.saveArticle(it)
-            navController.navigate(R.id.action_nav_feed_to_nav_article)
-        }
-        _binding!!.feedRecyclerview.adapter = feedArticleAdapter
-
+        setUpRecyclerView()
         // Calling the fetchGlobalFeed() method to make a request to server
         viewModel.fetchGlobalFeed()
         // & now observing the viewModel
         viewModel.feed.observe(viewLifecycleOwner) {
 
+            (it is Resource.Loading).let {
+                _binding?.feedRecyclerview?.isVisible = !it
+                _binding?.shimmerLayout?.isVisible = it
+//                _binding?.shimmerLayout?.stopShimmer()
+            }
             when (it) {
-                is Resource.Success -> feedArticleAdapter.submitList(it.value.body()?.articles)
                 is Resource.Failure -> handleApiError(it)  // Here it will be the Resource.Failure object
-                Resource.Loading -> {
-                    _binding?.feedRecyclerview?.isVisible = true
-                    _binding?.shimmerLayout?.isVisible = false
-                    _binding?.shimmerLayout?.stopShimmer()
-                }
+                is Resource.Success -> feedArticleAdapter.submitList(it.value.articles)
+//                Resource.Loading -> {
+//                    _binding?.feedRecyclerview?.isVisible = true
+//                    _binding?.shimmerLayout?.isVisible = false
+//                    _binding?.shimmerLayout?.stopShimmer()
+//                }
             }
         }
+
+    }
+
+    private fun setUpRecyclerView() {
+        _binding!!.feedRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+        feedArticleAdapter = FeedArticleAdapter {
+            viewModel.saveArticle(it)
+            // JetPack Safe Args
+//            val action : GlobalFeedFragmentDirections.ActionNavFeedToNavArticle = GlobalFeedFragmentDirections.actionNavFeedToNavArticle()
+//            action.article = it
+//            navController.navigate(action)
+            navController.navigate(R.id.action_nav_feed_to_nav_article)
+        }
+        _binding!!.feedRecyclerview.adapter = feedArticleAdapter
     }
 
     override fun getViewModal(): Class<FeedViewModel> = FeedViewModel::class.java

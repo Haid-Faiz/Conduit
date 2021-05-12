@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.api.models.entities.Article
 import com.example.api.services.ConduitClient
@@ -17,12 +15,16 @@ import com.example.conduit.data.repos.ArticlesRepo
 import com.example.conduit.databinding.FragmentCreateArticleBinding
 import com.example.conduit.extensions.handleApiError
 import com.example.conduit.extensions.showSnackBar
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class CreateArticleFragment : BaseFragment<FragmentCreateArticleBinding, ArticleViewModel, ArticlesRepo>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        createArticle()
         viewModel.article.observe(viewLifecycleOwner) {
             (it is Resource.Loading).let { check: Boolean ->
                 _binding!!.publishArticleProgressBar.isVisible = check
@@ -32,13 +34,13 @@ class CreateArticleFragment : BaseFragment<FragmentCreateArticleBinding, Article
 
             when (it) {
                 is Resource.Failure -> handleApiError(it, { createArticle() })
-                is Resource.Success -> updateUI(it.value.body()?.article)
+                is Resource.Success -> updateUI(it.value.article)
             }
         }
     }
 
     private fun updateUI(article: Article?) {
-        showSnackBar("Your is article successfully published.")
+        requireView().showSnackBar("Your is article successfully published.")
         findNavController().navigateUp()
     }
 
@@ -63,7 +65,11 @@ class CreateArticleFragment : BaseFragment<FragmentCreateArticleBinding, Article
 
     override fun getViewModal(): Class<ArticleViewModel> = ArticleViewModel::class.java
 
-    override fun getRepo(): ArticlesRepo = ArticlesRepo(authApi = ConduitClient.getAuthApiService())
+    override fun getRepo(): ArticlesRepo {
+        val authToken =
+            runBlocking { userPreference.authToken.first() } // We shouldn't call runBlocking{} as it can cause the ANR
+        return ArticlesRepo(authApi = authToken?.let { ConduitClient.getAuthApiService(it) })
+    }
 
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCreateArticleBinding =
         FragmentCreateArticleBinding.inflate(inflater, container, false)

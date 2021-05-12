@@ -15,8 +15,8 @@ class AuthViewModel(
     private val userRepo: UserRepo
 ) : BaseViewModel(userRepo) {
 
-    private var _user: MutableLiveData<Resource<out Response<UserResponse>>> = MutableLiveData()
-    val user: LiveData<Resource<out Response<UserResponse>>> = _user
+    private var _user: MutableLiveData<Resource<UserResponse>> = MutableLiveData()
+    val user: LiveData<Resource<UserResponse>> = _user
 
     fun loginUser(email: String, password: String) = viewModelScope.launch {
         _user.postValue(Resource.Loading)
@@ -35,18 +35,18 @@ class AuthViewModel(
     fun updateUser(
         username: String?,
         email: String?,
-        password: String?,
         bio: String?,
         imageUrl: String?
     ) = viewModelScope.launch {
         _user.postValue(Resource.Loading)
-        userRepo.updateUser(username, email, password, bio, imageUrl)?.let {
+        userRepo.updateUser(username, email, bio, imageUrl)?.let {
             _user.postValue(it)
         }
     }
 
     fun getCurrentUser(token: String) = viewModelScope.launch {
         userRepo.getCurrentUser(token).let {
+            _user.postValue(Resource.Loading)
             _user.postValue(it)
         }
     }

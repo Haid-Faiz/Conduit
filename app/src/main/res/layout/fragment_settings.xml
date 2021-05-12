@@ -111,27 +111,6 @@
                 android:textColor="@color/conduit_white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/pass_input"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Password"
-            android:layout_marginTop="16dp"
-            android:textColorHint="@color/box_color"
-            app:boxStrokeColor="@color/box_color"
-            app:hintTextColor="@color/box_color"
-            app:layout_constraintTop_toBottomOf="@id/email_input"
-            app:layout_constraintEnd_toEndOf="@id/email_input"
-            app:layout_constraintStart_toStartOf="@+id/email_input">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:textColor="@color/conduit_white" />
-        </com.google.android.material.textfield.TextInputLayout>
-
         <Button
             android:id="@+id/update_button"
             android:layout_width="0dp"
@@ -141,9 +120,9 @@
             android:text="Update profile"
             android:textAllCaps="false"
             android:textColor="@color/conduit_yellow"
-            app:layout_constraintTop_toBottomOf="@id/pass_input"
-            app:layout_constraintStart_toStartOf="@id/pass_input"
-            app:layout_constraintEnd_toEndOf="@id/pass_input"/>
+            app:layout_constraintTop_toBottomOf="@id/email_input"
+            app:layout_constraintStart_toStartOf="@id/email_input"
+            app:layout_constraintEnd_toEndOf="@id/email_input"/>
 
         <ProgressBar
             android:id="@+id/progress_bar_settings"

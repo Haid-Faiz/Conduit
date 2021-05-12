@@ -1,81 +1,108 @@
 package com.example.conduit
 
-import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.google.android.material.navigation.NavigationView
+import androidx.activity.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.ui.setupWithNavController
 import com.example.api.models.entities.User
+import com.example.api.services.ConduitClient
+import com.example.conduit.base.Resource
+import com.example.conduit.base.ViewModelFactory
+import com.example.conduit.data.UserPreference
+import com.example.conduit.data.repos.UserRepo
 import com.example.conduit.databinding.ActivityMainBinding
-import com.example.conduit.databinding.NavHeaderMainBinding
 import com.example.conduit.extensions.loadImage
+import com.example.conduit.extensions.showSnackBar
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        private const val PREFS_FILE_AUTH = "prefs_auth"
-        private const val PREFS_KEY_TOKEN = "token"
-    }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var _activityMainBinding: ActivityMainBinding? = null
     private lateinit var authViewModel: AuthViewModel
     private lateinit var navController: NavController
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var userPreferences: UserPreference
+//    private val sdf : AuthViewModel by viewModels<AuthViewModel> { ViewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _activityMainBinding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(_activityMainBinding?.root)
         setSupportActionBar(findViewById(R.id.toolbar))
-
-        sharedPreferences = getSharedPreferences(PREFS_FILE_AUTH, MODE_PRIVATE)
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
-        authViewModel = ViewModelProvider(this).get(AuthViewModel::class.java)
+        setUpAppBar()
+        userPreferences = UserPreference(this)
 
-        sharedPreferences.getString(PREFS_KEY_TOKEN, null)?.let {
+        val authToken = runBlocking { userPreferences.authToken.first() }
+
+        val factory = ViewModelFactory(
+            UserRepo(
+                authApi = authToken?.let { ConduitClient.getAuthApiService(it) },
+                publicApi = ConduitClient.getApiService(),
+                userPreference = userPreferences
+            )
+        )
+        authViewModel = ViewModelProvider(this@MainActivity, factory).get(AuthViewModel::class.java)
+
+        authToken?.let {
+            Log.d("token1", "onCreate: $it")
             authViewModel.getCurrentUser(it)
         }
+
+        authViewModel.user.observe(this) {
+            // it will not observe in this case -> when we will open up the app in logout condition
+            when (it) {
+                is Resource.Failure -> {
+                    updateMenu(null)
+                    lifecycleScope.launch { userPreferences.clearAuthToken() }
+                    _activityMainBinding?.root?.showSnackBar("Something went wrong")
+                }
+//                Resource.Loading -> TODO()
+                is Resource.Success -> it.value.user.let {
+                    authViewModel.saveAuthToken(it.token)
+                    Log.d("Token", "onCreate: ${it.token}")
+                    updateMenu(it)
+                    _activityMainBinding?.root?.showSnackBar("Welcome ${it.username}")
+                } ?: run {
+                    lifecycleScope.launch { userPreferences.clearAuthToken() }
+                    updateMenu(it.value.user)
+                    _activityMainBinding?.root?.showSnackBar("Something went wrong")
+                }
+            }
+        }
+    }
+
+    private fun setUpAppBar() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_feed,
-                R.id.nav_my_feed
+                R.id.nav_my_feed,
             ),
             _activityMainBinding?.drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         _activityMainBinding?.navView?.setupWithNavController(navController)
-
-        authViewModel.user.observe(this) {
-            updateMenu(it)
-            it?.token?.let { token: String ->
-                sharedPreferences.edit {
-                    this.putString(PREFS_KEY_TOKEN, token).apply()
-                    Toast.makeText(this@MainActivity, "Welcome ${it.username}", Toast.LENGTH_LONG).show()
-                }
-            } ?: run {
-                sharedPreferences.edit().remove(PREFS_KEY_TOKEN).apply()
-                Toast.makeText(this@MainActivity, "Successfully Logged out", Toast.LENGTH_LONG).show()
-            }
-        }
     }
 
     private fun updateMenu(user: User?) {
@@ -86,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                 navController.navigateUp()
                 _activityMainBinding?.navView?.inflateMenu(R.menu.activity_main_user)
                 val navHeaderView = _activityMainBinding?.navView?.getHeaderView(0)
-                navHeaderView?.findViewById<ImageView>(R.id.user_profile_image)?.loadImage(user.image!!)
+                user.image?.let { navHeaderView?.findViewById<ImageView>(R.id.user_profile_image)?.loadImage(it) }
                 navHeaderView?.findViewById<TextView>(R.id.user_profile_name)?.text = user.username
                 navHeaderView?.findViewById<TextView>(R.id.user_profile_email)?.text = user.email
             }
@@ -96,7 +123,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -108,6 +134,10 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_logout -> {
                 authViewModel.logout()
+                lifecycleScope.launch { userPreferences.clearAuthToken() }
+                navController.navigateUp()
+                updateMenu(null)
+                _activityMainBinding?.root?.showSnackBar("Successfully logged out")
                 return true
             }
         }
