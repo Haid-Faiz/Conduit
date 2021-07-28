@@ -1,4 +1,4 @@
-package com.example.conduit.extensions
+package com.example.conduit.utils
 
 import android.widget.TextView
 import java.text.SimpleDateFormat

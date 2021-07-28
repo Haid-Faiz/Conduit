@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.api.models.entities.Article
 import com.example.api.services.ConduitClient
@@ -13,10 +12,9 @@ import com.example.conduit.base.BaseFragment
 import com.example.conduit.base.Resource
 import com.example.conduit.data.repos.ArticlesRepo
 import com.example.conduit.databinding.FragmentCreateArticleBinding
-import com.example.conduit.extensions.handleApiError
-import com.example.conduit.extensions.showSnackBar
+import com.example.conduit.utils.handleApiError
+import com.example.conduit.utils.showSnackBar
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class CreateArticleFragment : BaseFragment<FragmentCreateArticleBinding, ArticleViewModel, ArticlesRepo>() {
@@ -33,8 +31,8 @@ class CreateArticleFragment : BaseFragment<FragmentCreateArticleBinding, Article
             }
 
             when (it) {
-                is Resource.Failure -> handleApiError(it, { createArticle() })
-                is Resource.Success -> updateUI(it.value.article)
+                is Resource.Error -> handleApiError(it) { createArticle() }
+                is Resource.Success -> updateUI(it.data?.article)
             }
         }
     }

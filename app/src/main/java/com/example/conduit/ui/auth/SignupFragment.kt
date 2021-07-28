@@ -15,7 +15,7 @@ import com.example.conduit.base.BaseFragment
 import com.example.conduit.base.Resource
 import com.example.conduit.data.repos.UserRepo
 import com.example.conduit.databinding.FragmentLoginSignupBinding
-import com.example.conduit.extensions.handleApiError
+import com.example.conduit.utils.handleApiError
 
 class SignupFragment : BaseFragment<FragmentLoginSignupBinding, AuthViewModel, UserRepo>() {
 
@@ -38,8 +38,8 @@ class SignupFragment : BaseFragment<FragmentLoginSignupBinding, AuthViewModel, U
                 _binding!!.submitButton.isEnabled = !it
             }
             when (it) {
-                is Resource.Failure -> handleApiError(it) { signUp() }
-                is Resource.Success -> updateUI(it.value.user)
+                is Resource.Error -> handleApiError(it) { signUp() }
+                is Resource.Success -> updateUI(it.data?.user)
             }
         }
     }

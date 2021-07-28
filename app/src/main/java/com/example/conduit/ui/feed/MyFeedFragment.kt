@@ -14,7 +14,7 @@ import com.example.conduit.base.BaseFragment
 import com.example.conduit.base.Resource
 import com.example.conduit.data.repos.ArticlesRepo
 import com.example.conduit.databinding.FragmentFeedBinding
-import com.example.conduit.extensions.handleApiError
+import com.example.conduit.utils.handleApiError
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -22,7 +22,6 @@ class MyFeedFragment : BaseFragment<FragmentFeedBinding, FeedViewModel, Articles
 
     private lateinit var feedArticleAdapter: FeedArticleAdapter
     private lateinit var navController: NavController
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -39,9 +38,9 @@ class MyFeedFragment : BaseFragment<FragmentFeedBinding, FeedViewModel, Articles
         viewModel.feed.observe(viewLifecycleOwner) {
 
             when (it) {
-                is Resource.Success -> feedArticleAdapter.submitList(it.value.articles)
-                is Resource.Failure -> handleApiError(it)
-                Resource.Loading -> {
+                is Resource.Success -> feedArticleAdapter.submitList(it.data?.articles)
+                is Resource.Error -> handleApiError(it)
+                is Resource.Loading -> {
                     _binding?.feedRecyclerview?.isVisible = true
                     _binding?.shimmerLayout?.stopShimmer()
                     _binding?.shimmerLayout?.isVisible = false

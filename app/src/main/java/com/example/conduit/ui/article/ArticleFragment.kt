@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import com.example.conduit.base.BaseFragment
 import com.example.conduit.data.repos.ArticlesRepo
 import com.example.conduit.databinding.FragmentArticleBinding
-import com.example.conduit.extensions.formatDate
-import com.example.conduit.extensions.loadImage
+import com.example.conduit.utils.formatDate
+import com.example.conduit.utils.loadImage
 import com.example.conduit.ui.feed.FeedViewModel
 
 class ArticleFragment : BaseFragment<FragmentArticleBinding, FeedViewModel, ArticlesRepo>() {

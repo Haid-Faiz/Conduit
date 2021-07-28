@@ -5,11 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -27,9 +24,8 @@ import com.example.conduit.base.ViewModelFactory
 import com.example.conduit.data.UserPreference
 import com.example.conduit.data.repos.UserRepo
 import com.example.conduit.databinding.ActivityMainBinding
-import com.example.conduit.extensions.loadImage
-import com.example.conduit.extensions.showSnackBar
-import com.google.android.material.snackbar.Snackbar
+import com.example.conduit.utils.loadImage
+import com.example.conduit.utils.showSnackBar
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -71,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         authViewModel.user.observe(this) {
             // it will not observe in this case -> when we will open up the app in logout condition
             when (it) {
-                is Resource.Failure -> {
+                is Resource.Error -> {
                     updateMenu(null)
                     lifecycleScope.launch { userPreferences.clearAuthToken() }
                     _activityMainBinding?.root?.showSnackBar("Something went wrong")

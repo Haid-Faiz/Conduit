@@ -1,16 +1,20 @@
 package com.example.conduit.base
 
-import okhttp3.ResponseBody
+sealed class Resource<T>(
+    val status: Status,
+    val data: T? = null,
+    val message: String? = null
+) {
 
-sealed class Resource<out T> {
+    class Success<T>(data: T) : Resource<T>(Status.SUCCESS, data)
 
-    data class Success<out T>(val value: T) : Resource<T>()
+    class Error<T>(message: String) : Resource<T>(Status.ERROR, message = message)
 
-    data class Failure(
-        val isNetworkError: Boolean,
-        val errorCode: Int?,
-        val errorBody: ResponseBody?
-    ) : Resource<Nothing>()
+    class Loading<T> : Resource<T>(Status.LOADING)
+}
 
-    object Loading : Resource<Nothing>()
+enum class Status {
+    SUCCESS,
+    ERROR,
+    LOADING
 }

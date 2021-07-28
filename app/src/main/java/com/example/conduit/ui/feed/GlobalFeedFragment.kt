@@ -14,7 +14,7 @@ import com.example.conduit.base.BaseFragment
 import com.example.conduit.base.Resource
 import com.example.conduit.data.repos.ArticlesRepo
 import com.example.conduit.databinding.FragmentFeedBinding
-import com.example.conduit.extensions.handleApiError
+import com.example.conduit.utils.handleApiError
 
 class GlobalFeedFragment : BaseFragment<FragmentFeedBinding, FeedViewModel, ArticlesRepo>() {
 
@@ -45,19 +45,14 @@ class GlobalFeedFragment : BaseFragment<FragmentFeedBinding, FeedViewModel, Arti
         // & now observing the viewModel
         viewModel.feed.observe(viewLifecycleOwner) {
 
-            (it is Resource.Loading).let {
-                _binding?.feedRecyclerview?.isVisible = !it
-                _binding?.shimmerLayout?.isVisible = it
-//                _binding?.shimmerLayout?.stopShimmer()
-            }
             when (it) {
-                is Resource.Failure -> handleApiError(it)  // Here it will be the Resource.Failure object
-                is Resource.Success -> feedArticleAdapter.submitList(it.value.articles)
-//                Resource.Loading -> {
-//                    _binding?.feedRecyclerview?.isVisible = true
-//                    _binding?.shimmerLayout?.isVisible = false
-//                    _binding?.shimmerLayout?.stopShimmer()
-//                }
+                is Resource.Error -> handleApiError(it)  // Here it will be the Resource.Error object
+                is Resource.Success -> feedArticleAdapter.submitList(it.data?.articles)
+                is Resource.Loading -> {
+                    _binding?.feedRecyclerview?.isVisible = true
+                    _binding?.shimmerLayout?.isVisible = false
+                    _binding?.shimmerLayout?.stopShimmer()
+                }
             }
         }
 

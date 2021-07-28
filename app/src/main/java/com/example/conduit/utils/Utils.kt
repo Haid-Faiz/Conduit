@@ -1,4 +1,4 @@
-package com.example.conduit.extensions
+package com.example.conduit.utils
 
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -21,13 +21,13 @@ fun View.showSnackBar(
 
 
 fun Fragment.handleApiError(
-    failure: Resource.Failure,
+    error: Resource.Error,
     retryFun: (() -> Unit)? = null
 ) {
     when {
-        failure.isNetworkError -> requireView().showSnackBar("Please check your internet connection", retryFun)
+        error.isNetworkError -> requireView().showSnackBar("Please check your internet connection", retryFun)
         // Code 401 -> UnAuthorized request
-        failure.errorCode == 401 -> {
+        error.errorCode == 401 -> {
 
         }
     }
@@ -35,7 +35,7 @@ fun Fragment.handleApiError(
 
 //
 //fun Fragment.handleApiError(
-//    failure: Resource.Failure,
+//    failure: Resource.Error,
 //    retryFunction: (() -> Unit)? = null
 //) {
 //    when {

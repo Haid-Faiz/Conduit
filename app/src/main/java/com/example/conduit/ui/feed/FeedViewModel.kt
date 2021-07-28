@@ -14,13 +14,13 @@ import retrofit2.Response
 class FeedViewModel(private val articlesRepo: ArticlesRepo) : BaseViewModel(articlesRepo) {
 
     private lateinit var article: Article
+
     private var _feed: MutableLiveData<Resource<ArticlesResponse>> = MutableLiveData()
     val feed: LiveData<Resource<ArticlesResponse>> = _feed
 
     fun fetchGlobalFeed() = viewModelScope.launch {
-        articlesRepo.getGlobalFeed().let {
-            _feed.postValue(it)
-        }
+        _feed.postValue(Resource.Loading())
+        _feed.postValue(articlesRepo.getGlobalFeed())
     }
 
     fun fetchMyFeed() = viewModelScope.launch {

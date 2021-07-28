@@ -1,7 +1,6 @@
 package com.example.conduit.ui.auth
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +16,7 @@ import com.example.conduit.base.BaseFragment
 import com.example.conduit.base.Resource
 import com.example.conduit.data.repos.UserRepo
 import com.example.conduit.databinding.FragmentLoginSignupBinding
-import com.example.conduit.extensions.handleApiError
-import com.example.conduit.extensions.showSnackBar
+import com.example.conduit.utils.handleApiError
 
 class LoginFragment : BaseFragment<FragmentLoginSignupBinding, AuthViewModel, UserRepo>() {
 
@@ -45,8 +43,8 @@ class LoginFragment : BaseFragment<FragmentLoginSignupBinding, AuthViewModel, Us
             }
 
             when (it) {
-                is Resource.Success -> updateUI(it.value.user)
-                is Resource.Failure -> handleApiError(it) { signIn() }
+                is Resource.Success -> updateUI(it.data?.user)
+                is Resource.Error -> handleApiError(it) { signIn() }
             }
         }
     }

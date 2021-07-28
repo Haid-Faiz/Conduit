@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.api.models.entities.Article
 import com.example.conduit.databinding.ListItemArticleBinding
-import com.example.conduit.extensions.formatDate
-import com.example.conduit.extensions.loadImage
+import com.example.conduit.utils.formatDate
+import com.example.conduit.utils.loadImage
 
 class FeedArticleAdapter(
     private val onArticleClicked: (article: Article) -> Unit

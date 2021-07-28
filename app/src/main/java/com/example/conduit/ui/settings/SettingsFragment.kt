@@ -12,8 +12,8 @@ import com.example.conduit.base.BaseFragment
 import com.example.conduit.base.Resource
 import com.example.conduit.data.repos.UserRepo
 import com.example.conduit.databinding.FragmentSettingsBinding
-import com.example.conduit.extensions.handleApiError
-import com.example.conduit.extensions.showSnackBar
+import com.example.conduit.utils.handleApiError
+import com.example.conduit.utils.showSnackBar
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -32,8 +32,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, AuthViewModel, Us
                 _binding!!.updateButton.isEnabled = !check
             }
             when(it) {
-                is Resource.Failure -> handleApiError(it) {updateUserData()}
-                is Resource.Success -> updateUI(it.value.user)
+                is Resource.Error -> handleApiError(it) {updateUserData()}
+                is Resource.Success -> updateUI(it.data?.user)
             }
         }
     }

@@ -19,14 +19,14 @@ class AuthViewModel(
     val user: LiveData<Resource<UserResponse>> = _user
 
     fun loginUser(email: String, password: String) = viewModelScope.launch {
-        _user.postValue(Resource.Loading)
+        _user.postValue(Resource.Loading())
         userRepo.loginUser(email, password).let {
             _user.postValue(it)
         }
     }
 
     fun signupUser(username: String, email: String, password: String) = viewModelScope.launch {
-        _user.postValue(Resource.Loading)
+        _user.postValue(Resource.Loading())
         userRepo.signUp(username, email, password).let {
             _user.postValue(it)
         }
@@ -38,7 +38,7 @@ class AuthViewModel(
         bio: String?,
         imageUrl: String?
     ) = viewModelScope.launch {
-        _user.postValue(Resource.Loading)
+        _user.postValue(Resource.Loading())
         userRepo.updateUser(username, email, bio, imageUrl)?.let {
             _user.postValue(it)
         }
@@ -46,7 +46,7 @@ class AuthViewModel(
 
     fun getCurrentUser(token: String) = viewModelScope.launch {
         userRepo.getCurrentUser(token).let {
-            _user.postValue(Resource.Loading)
+            _user.postValue(Resource.Loading())
             _user.postValue(it)
         }
     }
